@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.code-house</groupId>
+        <artifactId>mom</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <groupId>org.code-house.mom</groupId>
+    <artifactId>producer</artifactId>
+
+    <name>MOM :: Producer</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.code-house.mom</groupId>
+            <artifactId>domain</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>
