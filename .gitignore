@@ -24,3 +24,4 @@ atlassian-ide-plugin.private.xml
 atlassian-ide-plugin.xml
 .project
 .classpath
+.springBeans

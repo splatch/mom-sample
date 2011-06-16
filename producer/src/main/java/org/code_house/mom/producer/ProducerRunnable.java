@@ -18,7 +18,18 @@ import org.code_house.mom.domain.Money.Currency;
 import org.code_house.mom.domain.Transfer;
 import org.codehaus.jackson.map.ObjectMapper;
 
+/**
+ * Thread which produces random messages.
+ * 
+ * @author ldywicki
+ */
 public class ProducerRunnable implements Runnable {
+
+	private static int pointer = 0;
+
+	private Connection connection;
+
+	private ObjectMapper mapper;
 
 	private static String[] clients = new String[] {
 		"Client 0",
@@ -27,12 +38,9 @@ public class ProducerRunnable implements Runnable {
 		"Client 3"
 	};
 
-	private static int pointer = 0;
-
-	private Connection connection;
-
 	public ProducerRunnable(ConnectionFactory factory, String user, String pass) throws JMSException {
 		connection = factory.createConnection(user, pass);
+		mapper = new ObjectMapper();
 	}
 
 	public void run() {
@@ -41,7 +49,6 @@ public class ProducerRunnable implements Runnable {
 				Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
 				Transfer transfer = createTransfer();
-				ObjectMapper mapper = new ObjectMapper();
 				String value = mapper.writeValueAsString(transfer);
 
 				TextMessage message = session.createTextMessage(value);

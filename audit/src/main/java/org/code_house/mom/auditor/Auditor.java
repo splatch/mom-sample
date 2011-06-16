@@ -48,10 +48,6 @@ public class Auditor implements InitializingBean {
 			
 		}
 
-		if (doc == null) {
-			doc = new Document();
-			doc.setId(jmsId);
-		}
 		return doc;
 	}
 
@@ -61,7 +57,8 @@ public class Auditor implements InitializingBean {
 			return;
 		}
 
-		Document document = getDocument(msg.getJMSCorrelationID());
+		Document document = new Document();
+		document.setId(msg.getJMSCorrelationID());
 		document.put("sent", msg.getJMSTimestamp());
 		document.put("body", ((TextMessage) msg).getText());
 		database.saveDocument(document);
@@ -69,9 +66,10 @@ public class Auditor implements InitializingBean {
 
 	private void advisoryDelivered(ActiveMQMessage msg) throws Exception {
 		Document document = getDocument(msg.getCorrelationId());
-		
-		if (!document.isEmpty()) {
+
+		if (null != document) {
 			document.put("delivered", true);
+			document.put("deliveryTime", msg.getLongProperty("time"));
 			database.saveDocument(document);
 		}
 	}
@@ -79,8 +77,9 @@ public class Auditor implements InitializingBean {
 	private void advisoryConsumed(ActiveMQMessage msg) throws Exception {
 		Document document = getDocument(msg.getCorrelationId());
 
-		if (!document.isEmpty()) {
+		if (null != document) {
 			document.put("consumed", true);
+			document.put("consumptionTime", msg.getLongProperty("time"));
 			database.saveDocument(document);
 			
 		}
@@ -93,7 +92,7 @@ public class Auditor implements InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 		database = driver.getDatabase("audit");
 	}
-	
+
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("auditor.xml");
 		context.start();

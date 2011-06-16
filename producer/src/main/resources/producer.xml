@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="view" class="org.code_house.mom.producer.ProducerWindow">
+        <property name="title" value="Bank Agent APP" />
+    </bean>
+
+    <bean id="controller" class="org.code_house.mom.producer.ProducerController">
+        <constructor-arg ref="view" />
+        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="mapper" ref="mapper" />
+    </bean>
+
+    <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="${url}" />
+        <property name="userName" value="${user}" />
+        <property name="password" value="${pass}" />
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:activemq.properties" />
+    </bean>
+    
+    <bean id="mapper" class="org.codehaus.jackson.map.ObjectMapper" />
+
+</beans>

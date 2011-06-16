@@ -27,6 +27,18 @@
             <groupId>org.code-house.mom</groupId>
             <artifactId>domain</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout</artifactId>
+            <version>3.7.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>it.tidalwave.betterbeansbinding</groupId>
+            <artifactId>betterbeansbinding-swingbinding</artifactId>
+            <version>1.3.0</version>
+        </dependency>
     </dependencies>
 
 </project>

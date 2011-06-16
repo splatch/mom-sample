@@ -21,36 +21,32 @@
 
         <route id="delivery">
             <from uri="activemq:topic:ActiveMQ.Advisory.MessageDelivered.Queue.MOM.Client.&gt;?disableReplyTo=true&amp;mapJmsMessage=false" />
-            <setHeader headerName="JMSCorrelationID">
-                <simple>${in.body.getDataStructure.getJMSCorrelationID}</simple>
-            </setHeader>
-            <setBody>
-                <simple>
-                {
-                    messageId: "${in.body.getDataStructure.getJMSMessageID}",
-                    correlationId: "${in.body.getDataStructure.getJMSCorrelationID}",
-                    time: ${in.body.getDataStructure.getJMSTimestamp}
-                }
-                </simple>
-            </setBody>
+            <enrich uri="direct:enrich" strategyRef="aggregationStrategy" />
             <to uri="activemq:MOM.Audit.Delivered?jmsMessageType=Text" />
         </route>
 
         <route id="consumption">
             <from uri="activemq:topic:ActiveMQ.Advisory.MessageConsumed.Queue.MOM.Client.&gt;" />
+            <enrich uri="direct:enrich" strategyRef="aggregationStrategy" />
+            <to uri="activemq:MOM.Audit.Consumed" />
+        </route>
+
+        <route id="enrich">
+            <from uri="direct:enrich" />
             <setHeader headerName="JMSCorrelationID">
                 <simple>${in.body.getDataStructure.getJMSCorrelationID}</simple>
+            </setHeader>
+            <setHeader headerName="time">
+                <simple>${in.body.getDataStructure.getJMSTimestamp}</simple>
             </setHeader>
             <setBody>
                 <simple>
                 {
                     messageId: "${in.body.getDataStructure.getJMSMessageID}",
-                    correlationId: "${in.body.getDataStructure.getJMSCorrelationID}",
-                    time: ${in.body.getDataStructure.getJMSTimestamp}
+                    correlationId: "${in.body.getDataStructure.getJMSCorrelationID}"
                 }
                 </simple>
             </setBody>
-            <to uri="activemq:MOM.Audit.Consumed" />
         </route>
     </camelContext>
  
@@ -59,6 +55,8 @@
             <value>vm://MOMBroker</value>
         </property>
     </bean>
+ 
+    <bean id="aggregationStrategy" class="org.apache.camel.processor.aggregate.UseLatestAggregationStrategy" />
  
      <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="connectionFactory" ref="connectionFactory" />

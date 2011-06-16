@@ -2,19 +2,19 @@ package org.code_house.mom.producer;
 
 import javax.jms.JMSException;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+/**
+ * Entry point to application.
+ * 
+ * @author ldywicki
+ */
 public class Producer {
 
 	public static void main(String[] args) throws JMSException {
-		ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:4000");
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("producer.xml");
 
-		ProducerRunnable producerRunnable = new ProducerRunnable(connectionFactory, "admin", "admin");
-		
-		Thread thread = new Thread(producerRunnable, "producer-thread");
-		thread.start();
-
-
+		context.start();
 	}
 
 }
