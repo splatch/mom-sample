@@ -3,14 +3,11 @@ package org.code_house.mom.producer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
@@ -34,13 +31,13 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author ldywicki
  */
+@SuppressWarnings("all")
 public class ProducerController implements InitializingBean, ActionListener {
 
-	private ConnectionFactory connectionFactory;
 	private ProducerView view;
 	private Transfer model;
 	private ObjectMapper mapper;
-	private Session session;
+	private MessageSender sender;
 
 	// test clients
 	private List<Client> clients = Arrays.asList(
@@ -50,6 +47,7 @@ public class ProducerController implements InitializingBean, ActionListener {
 		new Client("Client 3", 3)
 	);
 
+	// listener to update message area
 	private BindingListener listener = new AbstractBindingListener() {
 
 		@Override
@@ -95,15 +93,9 @@ public class ProducerController implements InitializingBean, ActionListener {
 	}
 
 	private void sendMessage() throws Exception {
-		if (session == null) {
-			session = connectionFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE);
-		}
-		TextMessage message = session.createTextMessage(view.getMessageArea().getText());
-		message.setLongProperty("destination", model.getDestination().getId());
-
-		Queue destination = session.createQueue("MOM.Incoming");
-		MessageProducer producer = session.createProducer(destination);
-		producer.send(message);
+		Map<String, Object> headers = new HashMap<String, Object>();
+		headers.put("destination", model.getDestination().getId());
+		sender.sendMessage(mapper.writeValueAsString(model), headers);
 	}
 
 	private void bind() {
@@ -150,8 +142,8 @@ public class ProducerController implements InitializingBean, ActionListener {
 		}
 	}
 
-	public void setConnectionFactory(ConnectionFactory connectionFactory) {
-		this.connectionFactory = connectionFactory;
+	public void setMessageSender(MessageSender sender) {
+		this.sender = sender;
 	}
 
 	public void setMapper(ObjectMapper mapper) {

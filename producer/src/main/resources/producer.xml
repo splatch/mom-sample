@@ -9,7 +9,12 @@
 
     <bean id="controller" class="org.code_house.mom.producer.ProducerController">
         <constructor-arg ref="view" />
-        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="messageSender">
+            <bean class="org.code_house.mom.producer.JmsMessageSender">
+                <constructor-arg value="MOM.Incoming" />
+                <property name="connectionFactory" ref="connectionFactory" />
+            </bean>
+        </property>
         <property name="mapper" ref="mapper" />
     </bean>
 
@@ -22,7 +27,7 @@
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location" value="classpath:activemq.properties" />
     </bean>
-    
+
     <bean id="mapper" class="org.codehaus.jackson.map.ObjectMapper" />
 
 </beans>

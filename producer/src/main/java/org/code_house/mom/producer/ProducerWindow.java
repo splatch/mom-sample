@@ -26,6 +26,7 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author ldywicki
  */
+@SuppressWarnings("all")
 public class ProducerWindow extends JFrame implements ProducerView, InitializingBean, DisposableBean {
 
 	private static final long serialVersionUID = -6089606546968564636L;
@@ -35,7 +36,6 @@ public class ProducerWindow extends JFrame implements ProducerView, Initializing
 	private JTextField amountField;
 	private JLabel statusBar;
 	private JTextArea messageArea;
-
 	private JButton submitButton;
 
 	public ProducerWindow() {
